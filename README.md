@@ -23,7 +23,7 @@ Api:[US Ed Github Page](https://usedgov.github.io)
 -------
 
 
-## Readings, Tool, and More
+## Readings, Tools, and More
 ------
-#### SVG Editor
-https://github.com/SVG-Edit/svgedit
+* [Intro to D3](https://github.com/curran/screencasts/tree/gh-pages/introToD3)
+* [SVG Editor](https://github.com/SVG-Edit/svgedit)
