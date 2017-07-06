@@ -11,7 +11,7 @@ Built using [mean.io](http://mean.io/#!/docs)
 ### CLIs
 * [Angular CLI](https://github.com/angular/angular-cli)
 
-------
+
 ## Data and APIs
 
 ### Data Points
