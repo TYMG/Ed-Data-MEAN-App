@@ -60,7 +60,6 @@ StateSchema.statics = {
    * @returns {Promise<State, APIError>}
    */
   getByStateCode(stateCodeParam) {
-    console.log("THE STATE PARAM  " + stateCodeParam);
     return this.findOne({ stateCode: stateCodeParam })
       .exec()
       .then((state) => {
@@ -82,7 +81,6 @@ StateSchema.statics = {
       .exec()
       .then((state) => {
         if (state) {
-          console.log("MODEL " + state)
           return state;
         }
         const err = new APIError('No States!', httpStatus.NOT_FOUND);

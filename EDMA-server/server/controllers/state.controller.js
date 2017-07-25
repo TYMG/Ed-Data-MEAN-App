@@ -1,48 +1,64 @@
 import State from '../models/state.model';
 
 
-function load(params) {
-  return State.get(params.id);
+function load(req) {
+  return State.get(req.stateCode);
 }
 
 function get(req, res) {
- State.getByStateCode(req.params.stateCode)
+  State.getByStateCode(req.stateCode)
     .then(states => res.json(states))
-    .catch(e => next(e));  
+    .catch(e => (e));
 }
 
-function create(params) {
+function create(req, res) {
   const state = new State({
-    stateCode: params.data.stateCode,
-    population: params.data.population,
-    autoLoanDebt: params.data.autoLoanDebt,
-    creditCardDebt: params.data.creditCardDebt,
-    mortagageDebt: params.data.mortagageDebt,
-    studentLoanDebt: params.data.studentLoanDebt,
-    totalDebt: params.data.totalDebt,
-    autoLoanDelinq: params.data.autoLoanDelinq,
-    creditCardDelinq: params.data.creditCardDelinq,
-    mortagageDelinq: params.data.mortagageDelinq,
-    studentLoanDelinq: params.data.studentLoanDelinq
+    stateCode: req.body.data.stateCode,
+    population: req.body.data.population,
+    autoLoanDebt: req.body.data.autoLoanDebt,
+    creditCardDebt: req.body.data.creditCardDebt,
+    mortagageDebt: req.body.data.mortagageDebt,
+    studentLoanDebt: req.body.data.studentLoanDebt,
+    totalDebt: req.body.data.totalDebt,
+    autoLoanDelinq: req.body.data.autoLoanDelinq,
+    creditCardDelinq: req.body.data.creditCardDelinq,
+    mortagageDelinq: req.body.data.mortagageDelinq,
+    studentLoanDelinq: req.body.data.studentLoanDelinq
   });
-  return state.save();
+  State.create(state,
+    (err) => {
+      if (err) {
+        return err;
+      }
+      return undefined;
+    }
+  ).then((savedState) => {
+    res.json(savedState);
+  }).catch((err) => {
+    res.json(err);
+  });
+  /* .then(savedState =>
+    {
+      res.json(savedState);
+    })
+  .catch(e => (console.log())); */
 }
 
-function update(params) {
-  return load(params).then(state => {
-    const tmp = state;
-    state.stateCode =  params.data.stateCode,
-    state.population =  params.data.population,
-    state.autoLoanDebt =  params.data.autoLoanDebt,
-    state.creditCardDebt =  params.data.creditCardDebt,
-    state.mortagageDebt =  params.data.mortagageDebt,
-    state.studentLoanDebt =  params.data.studentLoanDebt,
-    state.totalDebt =  params.data.totalDebt,
-    state.autoLoanDelinq =  params.data.autoLoanDelinq,
-    state.creditCardDelinq =  params.data.creditCardDelinq,
-    state.mortagageDelinq =  params.data.mortagageDelinq,
-    state.studentLoanDelinq =  params.data.studentLoanDelinq
-    return state.save()
+function update(req, res, next) {
+  return load(req, res, next).then((state) => {
+    const updatedState = state;
+    updatedState.stateCode = req.body.data.stateCode;
+    updatedState.population = req.body.data.population;
+    updatedState.autoLoanDebt = req.body.data.autoLoanDebt;
+    updatedState.creditCardDebt = req.body.data.creditCardDebt;
+    updatedState.mortagageDebt = req.body.data.mortagageDebt;
+    updatedState.studentLoanDebt = req.body.data.studentLoanDebt;
+    updatedState.totalDebt = req.body.data.totalDebt;
+    updatedState.autoLoanDelinq = req.body.data.autoLoanDelinq;
+    updatedState.creditCardDelinq = req.body.data.creditCardDelinq;
+    updatedState.mortagageDelinq = req.body.data.mortagageDelinq;
+    updatedState.studentLoanDelinq = req.body.data.studentLoanDelinq;
+    return updatedState.save();
   });
 }
 
@@ -52,8 +68,13 @@ function list(req, res, next) {
     .catch(e => next(e));
 }
 
-function remove(params) {
-  return load(params).then(state => state.remove());
+function remove(req, res, next) {
+  return load(req, res, next)
+    .then(
+    state => state.remove()
+      .then(removedState => res.json(removedState))
+      .catch(e => next(e))
+    );
 }
 
 export default { load, get, create, update, list, remove };

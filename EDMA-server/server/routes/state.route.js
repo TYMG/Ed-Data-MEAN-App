@@ -1,9 +1,7 @@
 import express from 'express';
-import validate from 'express-validation';
-//import paramValidation from '../config/param-validation';
 import stateCtrl from '../controllers/state.controller';
 
-const router = express.Router();
+const router = new express.Router();
 
 router.route('/')
   /** GET /api/states - Get list of states */
