@@ -4,6 +4,8 @@
 # High Level
 From 1999 to 2016 there is data on the different types of Debt. This MEAN Stack project will use D3.js to display that data in a visually appealing fashion,using a map of the United States and a table. And the site should be responsive in order to accomodate mobile phones and tablets alike. 
 
+![Shit Tier Wireframe](./Wireframes V1.jpg "Basic Wireframe")
+
 
 # Pages
 This project should have about 2-3 pages. The Main Page, How it works, and maybe an About Us Page. 
