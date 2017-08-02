@@ -1,0 +1,51 @@
+<div>
+  <h1>
+    States
+  </h1>
+
+  <table>
+    <thead>
+      <td>_id</td>
+      <td>postalCode</td>
+      <td>Delete</td>
+    </thead>
+    <tbody>
+      <tr *ngFor="let state of states">
+        <td>
+          {{ state._id }}
+        </td>
+        <td>
+          {{ state.postalCode }}
+        </td>
+        <td>
+          <button
+            type="button"
+            (click)="onDeleteState(state)">
+            X
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+ <div>
+  <form
+    [formGroup]="stateFormGroup"
+    (ngSubmit)="onSubmitState()">
+
+    <!-- state -->
+    <input
+      type="text"
+      placeholder="postalCode"
+      name="postalCode"
+      formControlName="postalCode" />
+
+    <!-- submit -->
+    <button
+      type="submit">
+      Submit
+    </button>
+
+  </form>
+</div>

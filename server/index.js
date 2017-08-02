@@ -1,39 +1,77 @@
-import mongoose from 'mongoose';
-import util from 'util';
+const bodyParser = require('body-parser')
+const express = require('express')
+const mongodb = require('mongodb')
+const pathToRegexp = require('path-to-regexp')
+const morgan = require('morgan')
 
-// config should be imported before importing any other file
-import config from './config/config';
-import app from './config/express';
+const mongoUri = 'mongodb://localhost:27017/usDebt'
 
-const debug = require('debug')('express-mongoose-es6-rest-api:index');
+const app = express()
 
-// make bluebird default Promise
-Promise = require('bluebird'); // eslint-disable-line no-global-assign
+app.use(bodyParser.json())
 
-// plugin bluebird promise in mongoose
-mongoose.Promise = Promise;
+app.use(morgan('combined'))
 
-// connect to mongo db
-const mongoUri = config.mongo.host;
-mongoose.connect(mongoUri, { server: { socketOptions: { keepAlive: 1 } } });
-mongoose.connection.on('error', () => {
-  throw new Error(`unable to connect to database: ${mongoUri}`);
-});
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*")
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE")
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+  next()
+})
 
-// print mongoose logs in dev env
-if (config.MONGOOSE_DEBUG) {
-  mongoose.set('debug', (collectionName, method, query, doc) => {
-    debug(`${collectionName}.${method}`, util.inspect(query, false, 20), doc);
-  });
-}
+app.get('/', (req, res) => {
+  res.send('Hello world!')
+})
 
-// module.parent check is required to support mocha watch
-// src: https://github.com/mochajs/mocha/issues/1912
-if (!module.parent) {
-  // listen on port config.port
-  app.listen(config.port, () => {
-    console.info(`server started on port ${config.port} (${config.env})`); // eslint-disable-line no-console
-  });
-}
+app.get('/api/states', (req, res) => {
+  db.collection('states').find()
+    .toArray((err, states) => {
+      res.send(states)
+    })
+})
 
-export default app;
+app.post('/api/states', (req, res) => {
+  const state = Object.assign({}, req.body)
+  db.collection('states')
+    .insert(state, (err, result) => {
+      if (err) return console.log(err)
+      res.json(result)
+    })
+})
+
+app.get('/api/states/:_id', (req, res) => {
+  const objectId = mongodb.ObjectID(req.params['_id'])
+  db.collection('states')
+    .findOne({ '_id': objectId }, (err, state) => {
+      res.json(state)
+    })
+})
+
+app.put('/api/states/:_id', (req, res) => {
+  const objectId = mongodb.ObjectID(req.params['_id'])
+  let state = Object.assign({}, req.body)
+  delete state._id
+  db.collection('states')
+    .update({ '_id': objectId }, state, (err, result) => {
+      if (err) return console.log(err)
+      res.json(result)
+    })
+})
+
+app.delete('/api/states/:_id', (req, res) => {
+  const objectId = mongodb.ObjectID(req.params['_id'])
+  db.collection('states')
+    .remove({ '_id': objectId }, (err, result) => {
+      if (err) return console.log(err)
+      res.json(result)
+    })
+})
+
+mongodb.MongoClient.connect(mongoUri, (err, database) => {
+  if (err) return console.log(err)
+  console.log('Connected to database: ' + mongoUri)
+  db = database
+  app.listen(3000, () => {
+    console.log('Example app listening on port 3000!')
+  })
+})
